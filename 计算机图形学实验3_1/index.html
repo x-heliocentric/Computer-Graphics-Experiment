@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>二维图形变换实验</title>
+    <style>
+        body {
+            margin: 20px;
+            font-family: Arial;
+            text-align: center;
+        }
+        #canvas-container {
+            position: relative;
+            display: inline-block;
+            margin: 20px auto;
+        }
+        #gl-canvas {
+            display: block;
+            border: 1px solid #ccc;
+            background: white;
+        }
+        .controls {
+            margin: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            display: inline-block;
+        }
+        .control-group {
+            margin: 10px 0;
+        }
+        label {
+            display: inline-block;
+            width: 80px;
+            text-align: right;
+            margin-right: 10px;
+        }
+        input {
+            width: 60px;
+            padding: 5px;
+            margin-right: 15px;
+        }
+        button {
+            padding: 8px 15px;
+            margin: 5px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button.reset {
+            background: #f44336;
+        }
+        .coord-label {
+            position: absolute;
+            color: #333;
+            font-size: 12px;
+            pointer-events: none;
+        }
+        .x-axis-label {
+            bottom: -20px;
+        }
+        .y-axis-label {
+            left: -25px;
+            transform: rotate(-90deg);
+            transform-origin: left center;
+        }
+    </style>
+</head>
+<body>
+    <h2>二维图形变换实验</h2>
+    
+    <div id="canvas-container">
+        <canvas id="gl-canvas" width="600" height="600"></canvas>
+    </div>
+    
+    <div class="controls">
+        <div class="control-group">
+            <label>平移 X:</label>
+            <input type="number" id="translate-x" value="0" step="1">
+            <label>平移 Y:</label>
+            <input type="number" id="translate-y" value="0" step="1">
+            <button onclick="resetTranslation()">重置平移</button>
+        </div>
+        
+        <div class="control-group">
+            <label>旋转角度:</label>
+            <input type="number" id="rotate-angle" value="0" step="1">
+            <button onclick="resetRotation()">重置旋转</button>
+        </div>
+        
+        <div class="control-group">
+            <label>缩放 X:</label>
+            <input type="number" id="scale-x" value="1" step="0.1" min="0.1">
+            <label>缩放 Y:</label>
+            <input type="number" id="scale-y" value="1" step="0.1" min="0.1">
+            <button onclick="resetScale()">重置缩放</button>
+        </div>
+        
+        <button onclick="resetAll()" class="reset">重置所有变换</button>
+    </div>
+
+    <script>
+        // 简单的WebGL初始化
+        const canvas = document.getElementById('gl-canvas');
+        const gl = canvas.getContext('webgl');
+        
+        if (!gl) {
+            alert('浏览器不支持WebGL');
+        }
+        
+        // 顶点着色器
+        const vsSource = `
+            attribute vec2 aPosition;
+            uniform vec2 uTranslation;
+            uniform float uRotation;
+            uniform vec2 uScale;
+            
+            void main() {
+                // 应用缩放
+                vec2 scaled = aPosition * uScale;
+                
+                // 应用旋转
+                float cosA = cos(uRotation);
+                float sinA = sin(uRotation);
+                vec2 rotated = vec2(
+                    scaled.x * cosA - scaled.y * sinA,
+                    scaled.x * sinA + scaled.y * cosA
+                );
+                
+                // 应用平移
+                vec2 translated = rotated + uTranslation;
+                
+                gl_Position = vec4(translated, 0.0, 1.0);
+            }
+        `;
+        
+        // 片段着色器 - 红色
+        const fsSource = `
+            precision mediump float;
+            void main() {
+                gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+            }
+        `;
+        
+        // 编译着色器
+        function compileShader(source, type) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                console.error('着色器编译错误:', gl.getShaderInfoLog(shader));
+                gl.deleteShader(shader);
+                return null;
+            }
+            return shader;
+        }
+        
+        const vertexShader = compileShader(vsSource, gl.VERTEX_SHADER);
+        const fragmentShader = compileShader(fsSource, gl.FRAGMENT_SHADER);
+        
+        // 创建程序
+        const program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+        
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+            console.error('程序链接错误:', gl.getProgramInfoLog(program));
+        }
+        
+        gl.useProgram(program);
+        
+        // 设置视口
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.clearColor(1.0, 1.0, 1.0, 1.0);
+        
+        // 正方形顶点数据
+        const vertices = new Float32Array([
+            // 第一个三角形
+            -0.1, -0.1,  // 左下角
+             0.1, -0.1,  // 右下角
+            -0.1,  0.1,  // 左上角
+            // 第二个三角形
+             0.1, -0.1,  // 右下角
+             0.1,  0.1,  // 右上角
+            -0.1,  0.1   // 左上角
+        ]);
+        
+        // 创建缓冲区
+        const vertexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+        
+        // 设置顶点属性
+        const positionLocation = gl.getAttribLocation(program, 'aPosition');
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+        
+        // 获取uniform位置
+        const translationLocation = gl.getUniformLocation(program, 'uTranslation');
+        const rotationLocation = gl.getUniformLocation(program, 'uRotation');
+        const scaleLocation = gl.getUniformLocation(program, 'uScale');
+        
+        // 变换参数
+        let translation = [0, 0];
+        let rotation = 0;
+        let scale = [1, 1];
+        
+        // 渲染函数
+        function render() {
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            
+            // 设置uniform值
+            gl.uniform2f(translationLocation, translation[0] * 0.01, translation[1] * 0.01);
+            gl.uniform1f(rotationLocation, rotation * Math.PI / 180);
+            gl.uniform2f(scaleLocation, scale[0], scale[1]);
+            
+            // 绘制正方形
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+        }
+        
+        // 初始渲染
+        render();
+        
+        // 事件监听
+        document.getElementById('translate-x').addEventListener('input', function() {
+            translation[0] = parseFloat(this.value) || 0;
+            render();
+        });
+        
+        document.getElementById('translate-y').addEventListener('input', function() {
+            translation[1] = parseFloat(this.value) || 0;
+            render();
+        });
+        
+        document.getElementById('rotate-angle').addEventListener('input', function() {
+            rotation = parseFloat(this.value) || 0;
+            render();
+        });
+        
+        document.getElementById('scale-x').addEventListener('input', function() {
+            scale[0] = parseFloat(this.value) || 1;
+            render();
+        });
+        
+        document.getElementById('scale-y').addEventListener('input', function() {
+            scale[1] = parseFloat(this.value) || 1;
+            render();
+        });
+        
+        // 重置函数
+        function resetTranslation() {
+            document.getElementById('translate-x').value = 0;
+            document.getElementById('translate-y').value = 0;
+            translation = [0, 0];
+            render();
+        }
+        
+        function resetRotation() {
+            document.getElementById('rotate-angle').value = 0;
+            rotation = 0;
+            render();
+        }
+        
+        function resetScale() {
+            document.getElementById('scale-x').value = 1;
+            document.getElementById('scale-y').value = 1;
+            scale = [1, 1];
+            render();
+        }
+        
+        function resetAll() {
+            resetTranslation();
+            resetRotation();
+            resetScale();
+        }
+        
+        // 添加坐标标签
+        function addCoordinateLabels() {
+            const container = document.getElementById('canvas-container');
+            
+            // 添加X轴坐标标签
+            for (let i = -5; i <= 5; i++) {
+                const label = document.createElement('div');
+                label.className = 'coord-label x-axis-label';
+                label.textContent = i;
+                label.style.left = `${(i + 5) / 10 * 100}%`;
+                container.appendChild(label);
+            }
+            
+            // 添加Y轴坐标标签
+            for (let i = -5; i <= 5; i++) {
+                const label = document.createElement('div');
+                label.className = 'coord-label y-axis-label';
+                label.textContent = i;
+                label.style.top = `${(5 - i) / 10 * 100}%`;
+                container.appendChild(label);
+            }
+        }
+        
+        // 添加坐标标签
+        addCoordinateLabels();
+    </script>
+</body>
+</html>

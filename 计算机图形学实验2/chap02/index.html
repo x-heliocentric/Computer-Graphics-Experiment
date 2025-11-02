@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGL实验</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #fff;
+            color: #000;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 400;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            color: #666;
+            font-weight: 300;
+        }
+        
+        .tasks {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .task {
+            display: block;
+            padding: 25px 30px;
+            border: 1px solid #e0e0e0;
+            text-decoration: none;
+            color: #000;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .task:hover {
+            border-color: #000;
+            transform: translateY(-2px);
+        }
+        
+        .task-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .task-name {
+            font-size: 1.3rem;
+            font-weight: 400;
+        }
+        
+        .task-arrow {
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+        
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            color: #999;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .task {
+                padding: 20px 25px;
+            }
+            
+            .task-name {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>计算机图形学实验二</h1>
+            <p class="subtitle">图案绘制</p>
+        </header>
+        
+        <div class="tasks">
+            <a href="Task_a.html" class="task">
+                <div class="task-content">
+                    <span class="task-name">Task A</span>
+                    <span class="task-arrow">→</span>
+                </div>
+            </a>
+        
+            <a href="Task_b.html" class="task">
+                <div class="task-content">
+                    <span class="task-name">Task B</span>
+                    <span class="task-arrow">→</span>
+                </div>
+            </a>
+            
+            <a href="Task_cde.html" class="task">
+                <div class="task-content">
+                    <span class="task-name">Task C/D/E</span>
+                    <span class="task-arrow">→</span>
+                </div>
+            </a>
+        </div>
+        
+        <footer>
+            <p>2025-2026秋 · 计算机图形学</p>
+        </footer>
+    </div>
+</body>
+</html>

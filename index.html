@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计算机图形学实验</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #fff;
+            color: #000;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 400;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+        
+        .lab-section {
+            margin-bottom: 60px;
+        }
+        
+        .lab-title {
+            font-size: 1.8rem;
+            font-weight: 400;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .task-item {
+            display: block;
+            padding: 30px 20px;
+            border: 1px solid #e0e0e0;
+            text-decoration: none;
+            color: #000;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        
+        .task-item:hover {
+            border-color: #000;
+            transform: translateY(-2px);
+        }
+        
+        .task-name {
+            font-size: 1.3rem;
+            font-weight: 400;
+        }
+        
+        footer {
+            margin-top: 80px;
+            text-align: center;
+            color: #999;
+            font-size: 0.9rem;
+            padding-top: 30px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        @media (max-width: 768px) {
+            .tasks-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .lab-title {
+                font-size: 1.5rem;
+            }
+            
+            .task-item {
+                padding: 25px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>计算机图形学实验</h1>
+    </header>
+    
+    <main>
+        <!-- 作业一 -->
+        <section class="lab-section">
+            <h2 class="lab-title">计算机图形学实验一</h2>
+            <div class="tasks-grid">
+                <a href="计算机图形学实验1/chap01/task1.html" class="task-item">
+                    <div class="task-name">Task 1</div>
+                </a>
+                
+                <a href="计算机图形学实验1/chap01/task2.html" class="task-item">
+                    <div class="task-name">Task 2</div>
+                </a>
+                
+                <a href="计算机图形学实验1/chap01/task3.html" class="task-item">
+                    <div class="task-name">Task 3</div>
+                </a>
+                
+                <a href="计算机图形学实验1/chap01/task4.html" class="task-item">
+                    <div class="task-name">Task 4</div>
+                </a>
+                
+                <a href="计算机图形学实验1/chap01/task5.html" class="task-item">
+                    <div class="task-name">Task 5</div>
+                </a>
+                
+                <a href="计算机图形学实验1/chap01/task6.html" class="task-item">
+                    <div class="task-name">Task 6</div>
+                </a>
+            </div>
+        </section>
+        
+        <!-- 作业二 -->
+        <section class="lab-section">
+            <h2 class="lab-title">计算机图形学实验二</h2>
+            <div class="tasks-grid">
+                <a href="计算机图形学实验2/chap02/Task_a.html" class="task-item">
+                    <div class="task-name">Task A</div>
+                </a>
+                
+                <a href="计算机图形学实验2/chap02/Task_b.html" class="task-item">
+                    <div class="task-name">Task B</div>
+                </a>
+                
+                <a href="计算机图形学实验2/chap02/Task_cde.html" class="task-item">
+                    <div class="task-name">Task C/D/E</div>
+                </a>
+            </div>
+        </section>
+        
+        <!-- 作业三_1 -->
+        <section class="lab-section">
+            <h2 class="lab-title">计算机图形学实验三（1）</h2>
+            <div class="tasks-grid">
+                <a href="计算机图形学实验3_1/index.html" class="task-item">
+                    <div class="task-name">Task A</div>
+                </a>
+            </div>
+        </section>
+        
+        <!-- 作业三_2 -->
+        <section class="lab-section">
+            <h2 class="lab-title">计算机图形学实验三（2）</h2>
+            <div class="tasks-grid">
+                <a href="计算机图形学实验3_2/index.html" class="task-item">
+                    <div class="task-name">Task A</div>
+                </a>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <p>2025-2026秋 · 计算机图形学课程</p>
+    </footer>
+</body>
+</html>

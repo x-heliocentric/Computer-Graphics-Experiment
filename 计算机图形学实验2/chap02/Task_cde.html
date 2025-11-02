@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>WebGL图案绘制集成实验</title>
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        #version 300 es
+        in vec4 vPosition;
+        void main(){
+            gl_Position = vPosition;
+        }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-ragment">
+        #version 300 es
+        precision mediump float;
+        out vec4 fColor;
+        void main(){
+            fColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+        }
+    </script>
+
+    <script type="text/javascript" src="js/common/webgl-utils.js"></script>
+    <script type="text/javascript" src="js/common/initShaders.js"></script>
+    <script type="text/javascript" src="js/common/gl-matrix-min.js"></script>
+    <script type="text/javascript" src="js/ch02/integrated-tessellation.js"></script>
+    
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .control-panel { margin: 20px 0; padding: 15px; border: 1px solid #ccc; background: #f9f9f9; }
+        .control-group { margin: 10px 0; }
+        label { display: inline-block; width: 180px; }
+        input, select { margin: 5px; padding: 5px; }
+        button { padding: 8px 15px; margin: 5px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background: #45a049; }
+        canvas { border: 1px solid #000; margin-top: 10px; }
+        .info { color: #666; font-size: 0.9em; margin-top: 5px; }
+    </style>
+</head>
+
+<body>
+    <h2>Triangle Tessellation</h2>
+    
+    <div class="control-panel">
+        <div class="control-group">
+            <label for="subdivisionLevel">剖分层次 (0-7):</label>
+            <input type="number" id="subdivisionLevel" min="0" max="7" value="1">
+            <div class="info">控制三角形的细分次数，数值越大图案越复杂</div>
+        </div>
+        
+        <div class="control-group">
+            <label for="rotationType">旋转类型:</label>
+            <select id="rotationType">
+                <option value="none">无旋转</option>
+                <option value="fixed">固定角度旋转</option>
+                <option value="distance">基于距离的旋转</option>
+                <option value="both">固定旋转+距离旋转</option>
+            </select>
+            <div class="info">选择不同的旋转效果：无旋转=任务c，固定旋转=任务d，距离旋转=任务e</div>
+        </div>
+        
+        <div class="control-group" id="rotationAngleGroup">
+            <label for="rotationAngle">旋转角度 (度):</label>
+            <input type="number" id="rotationAngle" value="60" step="15">
+            <div class="info">设置旋转的角度大小</div>
+        </div>
+        
+        <div class="control-group">
+            <button onclick="updateDrawing()">更新绘制</button>
+            <button onclick="showCurrentSettings()">显示当前设置</button>
+            <button onclick="resetSettings()">重置设置</button>
+        </div>
+    </div>
+    
+    <canvas id="gl-canvas" width="600" height="600">你的浏览器不支持HTML5 canvas元素</canvas>
+    
+    <script>
+        function updateDrawing() {
+            const level = parseInt(document.getElementById('subdivisionLevel').value);
+            const rotationType = document.getElementById('rotationType').value;
+            const angle = parseFloat(document.getElementById('rotationAngle').value);
+            
+            if (level < 0 || level > 7) {
+                alert('请输入0-7之间的剖分层次');
+                return;
+            }
+            
+            // 调用JS函数更新绘制
+            if (window.updateTessellation) {
+                window.updateTessellation(level, rotationType, angle);
+            }
+        }
+        
+        function showCurrentSettings() {
+            const level = document.getElementById('subdivisionLevel').value;
+            const rotationType = document.getElementById('rotationType').value;
+            const angle = document.getElementById('rotationAngle').value;
+            
+            let rotationText = '';
+            switch(rotationType) {
+                case 'none': rotationText = '无旋转'; break;
+                case 'fixed': rotationText = '固定角度旋转'; break;
+                case 'distance': rotationText = '基于距离的旋转'; break;
+                case 'both': rotationText = '固定旋转+距离旋转'; break;
+            }
+            
+            alert(`当前设置:\n剖分层次: ${level}\n旋转类型: ${rotationText}\n旋转角度: ${angle}°`);
+        }
+        
+        function resetSettings() {
+            document.getElementById('subdivisionLevel').value = 1;
+            document.getElementById('rotationType').value = 'none';
+            document.getElementById('rotationAngle').value = 60;
+            updateDrawing();
+        }
+        
+        // 显示/隐藏旋转角度输入框
+        document.getElementById('rotationType').addEventListener('change', function() {
+            const angleGroup = document.getElementById('rotationAngleGroup');
+            if (this.value === 'none') {
+                angleGroup.style.display = 'none';
+            } else {
+                angleGroup.style.display = 'block';
+            }
+        });
+        
+        // 初始化隐藏角度输入框（如果选择无旋转）
+        document.getElementById('rotationType').dispatchEvent(new Event('change'));
+        
+        // 页面加载完成后自动绘制
+        window.addEventListener('load', function() {
+            setTimeout(updateDrawing, 100);
+        });
+    </script>
+</body>
+</html>

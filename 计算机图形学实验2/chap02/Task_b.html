@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>3D Sierpinski Gasket</title>
+    <script id="vertex-shader" type="x-shader/x-vertex">
+    #version 300 es
+    in vec3 vPosition;
+    in vec4 aColor;
+    out vec4 vColor;
+
+    void main(){
+        gl_Position = vec4( vPosition, 1.0 );
+        vColor = aColor;
+    }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+    #version 300 es
+    precision mediump float;
+    
+    in vec4 vColor;
+    out vec4 fColor;
+    void main(){
+        fColor = vColor;
+    }
+    </script>
+
+    <script type="text/javascript" src="js/common/webgl-utils.js"></script>
+    <script type="text/javascript" src="js/common/initShaders.js"></script>
+    <script type="text/javascript" src="js/common/gl-matrix-min.js"></script>
+
+    <script type="text/javascript" src="js/ch02/gasket-3d-combined.js"></script>
+    
+    <style>
+        .control-panel {
+            text-align: center;
+            margin: 20px 0;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h2 style="text-align: center;">3D Sierpinski Gasket</h2>
+    <div class="control-panel">
+        <label for="levelSelect">选择剖分层次: </label>
+        <select id="levelSelect" onchange="updateLevel(this.value)">
+            <option value="1">Level 1</option>
+            <option value="4">Level 4</option>
+        </select>
+    </div>
+    <canvas id="gl-canvas" width="512" height="512">你的浏览器不支持HTML5 canvas元素</canvas>
+</body>
+
+</html>
